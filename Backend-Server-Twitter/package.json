@@ -2,9 +2,9 @@
   "name": "backend-server-twitter",
   "version": "1.0.0",
   "description": "server side backend for frontend client",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon server.js"
   },
   "author": "Nishant-Maheshwari-geekcoderr",
   "license": "ISC",
