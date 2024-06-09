@@ -5,7 +5,7 @@ import Entity from "../models/user.model.js";
 
 const fetchLastState = async (req, res) => {
 	try {
-		const entity = await Entity.findById(req.entity._id).select("-password");
+		const entity = await Entity.findById(req.user._id).select("-password");
 		res.status(200).json(entity);
 	} catch (error) {
 		// Used for getting data
@@ -16,7 +16,7 @@ const fetchLastState = async (req, res) => {
 const fetchLastStatusJSON = async (req, res) => {
 	try {
 		// to serve data over testing.
-		const entity = await Entity.findById(req.entity._id).select("-password");
+		const entity = await Entity.findById(req.user._id).select("-password");
 		res.status(200).json(entity);
 	} catch (error) {
 		res.status(500).json({ error: "Server-Down Or Unreachable!" });
