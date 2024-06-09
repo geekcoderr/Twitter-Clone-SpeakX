@@ -11,6 +11,7 @@ const fetchUserDetails = async (req, res) => {
 		if (!user) return res.status(404).json({ message: "Person is not there" });
 
 		res.status(200).json(user);
+		// console.log(user);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -100,22 +101,22 @@ const modifyEntityDetails = async (req, res) => {
 			user.password = await bcrypt.hash(newPassword, salt);
 		}
 
-		if (profilePic) {
+		if (profileImg) {
 			if (user.profilePic) {
 				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
 			}
 
-			const uploadedResponse = await cloudinary.uploader.upload(profilePic);
-			profilePic = uploadedResponse.secure_url;
+			const uploadedResponse = await cloudinary.uploader.upload(profileImg);
+			profileImg = uploadedResponse.secure_url;
 		}
 
-		if (backgroundPic) {
+		if (coverImg) {
 			if (user.backgroundPic) {
 				await cloudinary.uploader.destroy(user.backgroundPic.split("/").pop().split(".")[0]);
 			}
 
-			const uploadedResponse = await cloudinary.uploader.upload(backgroundPic);
-			backgroundPic = uploadedResponse.secure_url;
+			const uploadedResponse = await cloudinary.uploader.upload(coverImg);
+			coverImg = uploadedResponse.secure_url;
 		}
 
 		user.fullName = fullName || user.fullName;
@@ -123,8 +124,8 @@ const modifyEntityDetails = async (req, res) => {
 		user.username = username || user.username;
 		user.bio = bio || user.bio;
 		user.link = link || user.link;
-		user.profilePic = profilePic || user.profilePic;
-		user.backgroundPic = backgroundPic || user.backgroundPic;
+		user.profileImg = profileImg || user.profileImg;
+		user.coverImg = coverImg || user.coverImg;
 
 		user = await user.save();
 

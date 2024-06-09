@@ -1,6 +1,6 @@
 import express from "express";
-import { fetchSuggestedEntities, fetchUserDetails, modifyEntityDetails, modifyFollowStatus } from "../controllers/user.controller.js";
-import { authSecurity } from "../middleware/authSecurity.js";
+import { fetchSuggestedEntities, fetchUserDetails, modifyEntityDetails, modifyFollowStatus } from "../controllers/userControllers.js";
+import { authSecurity } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

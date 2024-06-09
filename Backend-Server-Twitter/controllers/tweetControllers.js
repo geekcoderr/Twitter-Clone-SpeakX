@@ -30,6 +30,7 @@ const createTweet = async (req, res) => {
 		await newTweet.save();
 		res.status(201).json(newTweet);
 	} catch (error) {
+		// console.log(error);
 		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };

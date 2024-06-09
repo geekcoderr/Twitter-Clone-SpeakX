@@ -9,7 +9,7 @@ import {
     removeTweet,
     toggleLikeTweet
 } from "../controllers/tweetControllers.js";
-import { authSecurity } from "../middleware/authSecurity.js";
+import { authSecurity } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

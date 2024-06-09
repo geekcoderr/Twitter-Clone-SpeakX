@@ -1,6 +1,6 @@
 import express from "express";
 import { fetchLastState, fetchLastStatusJSON, register, signIn, signOut } from "../controllers/authControllers.js";
-import { authSecurity } from "../middleware/authSecurity.js";
+import { authSecurity } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

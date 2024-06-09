@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Entity from "../models/EntityModel";
+import Entity from "../models/EntityModel.js";
 
 const authSecurity = async (req, res, next) => {
 	try {
@@ -27,5 +27,7 @@ const authSecurity = async (req, res, next) => {
 	}
 };
 
-module.exports=authSecurity;
+export {
+	authSecurity
+};
 

@@ -9,6 +9,7 @@ const fetchLastState = async (req, res) => {
 		res.status(200).json(entity);
 	} catch (error) {
 		// Used for getting data
+		console.log(error);
 		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
@@ -46,6 +47,7 @@ const signIn = async (req, res) => {
 			backgroundPic: entity.backgroundPic,
 		});
 	} catch (error) {
+		console.log(error);
 		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
