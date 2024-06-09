@@ -1,8 +1,13 @@
-const express = require('express');
-const { register, login } = require('../controllers/authController');
+import express from "express";
+import { fetchLastState, fetchLastStatusJSON, register, signIn, signOut } from "../controllers/authControllers.js";
+import { protectRoute } from "../middleware/protectRoute.js";
+
 const router = express.Router();
 
-router.post('/register', register);
-router.post('/login', login);
+router.get('/me', protectRoute,fetchLastState);
+router.get('/me-raw',protectRoute,fetchLastStatusJSON);
+router.post('/login', signIn);
+router.post('/logout', signOut);
+router.post('/signup', register);
 
-module.exports = router;
+export default router;
