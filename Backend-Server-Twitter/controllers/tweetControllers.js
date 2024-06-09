@@ -1,19 +1,18 @@
 import { v2 as cloudinary } from "cloudinary";
-import Entity from "../models/EntityModel.js"; // Assuming "Entity" represents "Entity"
+import Entity from "../models/EntityModel.js";
 import Tweet from "../models/Tweet.js";
 
 
-// Create a new tweet
 const createTweet = async (req, res) => {
 	try {
 		const { text, img } = req.body;
 		const userId = req.user._id.toString();
 
 		const user = await Entity.findById(userId);
-		if (!user) return res.status(404).json({ message: "Entity not found" });
+		if (!user) return res.status(404).json({ message: "Entity dosen't Exist!" });
 
 		if (!text && !img) {
-			return res.status(400).json({ error: "Tweet must have text or image" });
+			return res.status(400).json({ error: "Tweet shall contain Content!" });
 		}
 
 		let imageUrl = img;
@@ -31,21 +30,19 @@ const createTweet = async (req, res) => {
 		await newTweet.save();
 		res.status(201).json(newTweet);
 	} catch (error) {
-		console.error("Error in createTweet controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
 
-// Delete a tweet
 const removeTweet = async (req, res) => {
 	try {
 		const tweet = await Tweet.findById(req.params.id);
 		if (!tweet) {
-			return res.status(404).json({ error: "Tweet not found" });
+			return res.status(404).json({ error: "Tweet dosen't Exist!" });
 		}
 
 		if (tweet.user.toString() !== req.user._id.toString()) {
-			return res.status(401).json({ error: "You are not authorized to delete this tweet" });
+			return res.status(401).json({ error: "You can't Perform this Operation!" });
 		}
 
 		if (tweet.img) {
@@ -54,14 +51,12 @@ const removeTweet = async (req, res) => {
 		}
 
 		await Tweet.findByIdAndDelete(req.params.id);
-		res.status(200).json({ message: "Tweet deleted successfully" });
+		res.status(200).json({ message: "Tweet Deleted!" });
 	} catch (error) {
-		console.error("Error in removeTweet controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
 
-// Add a comment to a tweet
 const addComment = async (req, res) => {
 	try {
 		const { text } = req.body;
@@ -69,12 +64,12 @@ const addComment = async (req, res) => {
 		const userId = req.user._id;
 
 		if (!text) {
-			return res.status(400).json({ error: "Text field is required" });
+			return res.status(400).json({ error: "Text shall be there!" });
 		}
 
 		const tweet = await Tweet.findById(tweetId);
 		if (!tweet) {
-			return res.status(404).json({ error: "Tweet not found" });
+			return res.status(404).json({ error: "Tweet dosen't Exist!" });
 		}
 
 		const comment = { user: userId, text };
@@ -83,12 +78,10 @@ const addComment = async (req, res) => {
 
 		res.status(200).json(tweet);
 	} catch (error) {
-		console.error("Error in addComment controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
 
-// Like or unlike a tweet
 const toggleLikeTweet = async (req, res) => {
 	try {
 		const userId = req.user._id;
@@ -96,7 +89,7 @@ const toggleLikeTweet = async (req, res) => {
 
 		const tweet = await Tweet.findById(tweetId);
 		if (!tweet) {
-			return res.status(404).json({ error: "Tweet not found" });
+			return res.status(404).json({ error: "Tweet dosen't Exist!" });
 		}
 
 		const userLikedTweet = tweet.likes.includes(userId);
@@ -122,12 +115,10 @@ const toggleLikeTweet = async (req, res) => {
 			res.status(200).json(updatedLikes);
 		}
 	} catch (error) {
-		console.error("Error in toggleLikeTweet controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
 
-// Fetch all tweets
 const getAllTweets = async (req, res) => {
 	try {
 		const tweets = await Tweet.find()
@@ -137,18 +128,16 @@ const getAllTweets = async (req, res) => {
 
 		res.status(200).json(tweets);
 	} catch (error) {
-		console.error("Error in getAllTweets controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
 
-// Fetch tweets liked by a user
 const getLikedTweets = async (req, res) => {
 	const userId = req.params.id;
 
 	try {
 		const user = await Entity.findById(userId);
-		if (!user) return res.status(404).json({ error: "Entity not found" });
+		if (!user) return res.status(404).json({ error: "Tweet dosen't Exist!" });
 
 		const likedTweets = await Tweet.find({ _id: { $in: user.likedPosts } })
 			.populate({ path: "user", select: "-password" })
@@ -156,17 +145,15 @@ const getLikedTweets = async (req, res) => {
 
 		res.status(200).json(likedTweets);
 	} catch (error) {
-		console.error("Error in getLikedTweets controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
 
-// Fetch tweets of users followed by the logged-in user
 const getFollowingTweets = async (req, res) => {
 	try {
 		const userId = req.user._id;
 		const user = await Entity.findById(userId);
-		if (!user) return res.status(404).json({ error: "Entity not found" });
+		if (!user) return res.status(404).json({ error: "Tweet dosen't Exist!" });
 
 		const following = user.following;
 		const feedTweets = await Tweet.find({ user: { $in: following } })
@@ -176,18 +163,16 @@ const getFollowingTweets = async (req, res) => {
 
 		res.status(200).json(feedTweets);
 	} catch (error) {
-		console.error("Error in getFollowingTweets controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
 
-// Fetch tweets by a specific user
 const getUserTweets = async (req, res) => {
 	try {
 		const { username } = req.params;
 
 		const user = await Entity.findOne({ username });
-		if (!user) return res.status(404).json({ error: "Entity not found" });
+		if (!user) return res.status(404).json({ error: "Tweet dosen't Exist!" });
 
 		const tweets = await Tweet.find({ user: user._id })
 			.sort({ createdAt: -1 })
@@ -196,8 +181,7 @@ const getUserTweets = async (req, res) => {
 
 		res.status(200).json(tweets);
 	} catch (error) {
-		console.error("Error in getUserTweets controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
 

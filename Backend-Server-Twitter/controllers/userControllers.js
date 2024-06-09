@@ -8,11 +8,10 @@ const fetchUserDetails = async (req, res) => {
 
 	try {
 		const user = await Entity.findOne({ username }).select("-password");
-		if (!user) return res.status(404).json({ message: "Entity not found" });
+		if (!user) return res.status(404).json({ message: "Person is not there" });
 
 		res.status(200).json(user);
 	} catch (error) {
-		console.log("Error in fetchUserDetails: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };
@@ -24,10 +23,10 @@ const modifyFollowStatus = async (req, res) => {
 		const currentUser = await Entity.findById(req.user._id);
 
 		if (id === req.user._id.toString()) {
-			return res.status(400).json({ error: "You can't follow/unfollow yourself" });
+			return res.status(400).json({ error: "This Operation is not Allowed!" });
 		}
 
-		if (!userToModify || !currentUser) return res.status(400).json({ error: "Entity not found" });
+		if (!userToModify || !currentUser) return res.status(400).json({ error: "Person is not there" });
 
 		const isFollowing = currentUser.following.includes(id);
 
@@ -36,16 +35,15 @@ const modifyFollowStatus = async (req, res) => {
 			await Entity.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
 			await Entity.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
 
-			res.status(200).json({ message: "Entity unfollowed successfully" });
+			res.status(200).json({ message: "Unfollowed!" });
 		} else {
 			// Follow the user
 			await Entity.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
 			await Entity.findByIdAndUpdate(req.user._id, { $push: { following: id } });
 
-			res.status(200).json({ message: "Entity followed successfully" });
+			res.status(200).json({ message: "Started Following!" });
 		}
 	} catch (error) {
-		console.log("Error in modifyFollowStatus: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };
@@ -65,7 +63,6 @@ const fetchSuggestedEntities = async (req, res) => {
 			{ $sample: { size: 10 } },
 		]);
 
-		// 1,2,3,4,5,6,
 		const filteredUsers = users.filter((user) => !usersFollowedByMe.following.includes(user._id));
 		const suggestedUsers = filteredUsers.slice(0, 4);
 
@@ -73,7 +70,6 @@ const fetchSuggestedEntities = async (req, res) => {
 
 		res.status(200).json(suggestedUsers);
 	} catch (error) {
-		console.log("Error in fetchSuggestedEntities: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };
@@ -86,40 +82,40 @@ const modifyEntityDetails = async (req, res) => {
 
 	try {
 		let user = await Entity.findById(userId);
-		if (!user) return res.status(404).json({ message: "Entity not found" });
+		if (!user) return res.status(404).json({ message: "Person is not there" });
 
 		if ((!newPassword && currentPassword) || (!currentPassword && newPassword)) {
-			return res.status(400).json({ error: "Please provide both current password and new password" });
+			return res.status(400).json({ error: "Must Provide both Current & New Password" });
 		}
 
 		if (currentPassword && newPassword) {
 			const isMatch = await bcrypt.compare(currentPassword, user.password);
-			if (!isMatch) return res.status(400).json({ error: "Current password is incorrect" });
-			if (newPassword.length < 6) {
-				return res.status(400).json({ error: "Password must be at least 6 characters long" });
+			if (!isMatch) return res.status(400).json({ error: "Current Password is incorrect" });
+			const passwordFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+			if (!passwordFormat.test(newPassword)) {
+			return res.status(400).json({ error: "Standard Password format must be followed!" });
 			}
 
 			const salt = await bcrypt.genSalt(10);
 			user.password = await bcrypt.hash(newPassword, salt);
 		}
 
-		if (profileImg) {
-			if (user.profileImg) {
-				// https://res.cloudinary.com/dyfqon1v6/image/upload/v1712997552/zmxorcxexpdbh8r0bkjb.png
-				await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
+		if (profilePic) {
+			if (user.profilePic) {
+				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
 			}
 
-			const uploadedResponse = await cloudinary.uploader.upload(profileImg);
-			profileImg = uploadedResponse.secure_url;
+			const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+			profilePic = uploadedResponse.secure_url;
 		}
 
-		if (coverImg) {
-			if (user.coverImg) {
-				await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
+		if (backgroundPic) {
+			if (user.backgroundPic) {
+				await cloudinary.uploader.destroy(user.backgroundPic.split("/").pop().split(".")[0]);
 			}
 
-			const uploadedResponse = await cloudinary.uploader.upload(coverImg);
-			coverImg = uploadedResponse.secure_url;
+			const uploadedResponse = await cloudinary.uploader.upload(backgroundPic);
+			backgroundPic = uploadedResponse.secure_url;
 		}
 
 		user.fullName = fullName || user.fullName;
@@ -127,17 +123,15 @@ const modifyEntityDetails = async (req, res) => {
 		user.username = username || user.username;
 		user.bio = bio || user.bio;
 		user.link = link || user.link;
-		user.profileImg = profileImg || user.profileImg;
-		user.coverImg = coverImg || user.coverImg;
+		user.profilePic = profilePic || user.profilePic;
+		user.backgroundPic = backgroundPic || user.backgroundPic;
 
 		user = await user.save();
 
-		// password should be null in response
 		user.password = null;
 
 		return res.status(200).json(user);
 	} catch (error) {
-		console.log("Error in modifyEntityDetails: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };

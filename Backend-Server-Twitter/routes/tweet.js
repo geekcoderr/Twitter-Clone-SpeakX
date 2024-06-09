@@ -8,7 +8,7 @@ import {
     getUserTweets,
     removeTweet,
     toggleLikeTweet
-} from "../controllers/post.controller.js";
+} from "../controllers/tweetControllers.js";
 import { authSecurity } from "../middleware/authSecurity.js";
 
 const router = express.Router();

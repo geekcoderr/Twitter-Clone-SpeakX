@@ -53,7 +53,7 @@ const signIn = async (req, res) => {
 const signOut = async (req, res) => {
 	try {
 		res.cookie("jwt", "", { maxAge: 0 });
-		res.status(200).json({ message: "entity Logged out!" });
+		res.status(200).json({ message: "Entity Logged out!" });
 	} catch (error) {
 		// Unable to Logout at this moment
 		res.status(500).json({ error: "Unable to Logout at this Moment." });
@@ -108,10 +108,10 @@ const register = async (req, res) => {
 				followers: userSchema.followers,
 				following: userSchema.following,
 				profilePic: userSchema.profiePic,
-				backgImg: userSchema.backgPic,
+				backgroundPic: userSchema.backgroundPic,
 			});
 		} else {
-			res.status(400).json({ error: "entity Data is Invalid!" });
+			res.status(400).json({ error: "Entity Data is Invalid!" });
 		}
 	} catch (error) {
 		// Error if Server is not running or not reachable.
