@@ -1,17 +1,32 @@
-const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken";
+import Entity from "../models/user.model.js";
 
-const authMiddleware = (req, res, next) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
-    if (!token) {
-        return res.status(401).json({ message: 'No token, authorization denied' });
-    }
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        res.status(401).json({ message: 'Token is not valid' });
-    }
+const authSecurity = async (req, res, next) => {
+	try {
+		const token = req.cookies.jwt;
+		if (!token) {
+			return res.status(401).json({ error: "Unauthorized: No Token Provided" });
+		}
+
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+		if (!decoded) {
+			return res.status(401).json({ error: "Unauthorized: Invalid Token" });
+		}
+
+		const user = await Entity.findById(decoded.userId).select("-password");
+
+		if (!user) {
+			return res.status(404).json({ error: "Entity not found" });
+		}
+
+		req.user = user;
+		next();
+	} catch (err) {
+		console.log("Error in authSecurity middleware", err.message);
+		return res.status(500).json({ error: "Internal Server Error in Protected" });
+	}
 };
 
-module.exports = authMiddleware;
+module.exports=authSecurity;
+
