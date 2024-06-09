@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
-import Entity from "../models/user.model.js";
+import { generateTokenAndSetCookie } from "../externalLibrary/methodOfTokenGenaration.js";
+import Entity from "../models/EntityModel.js";
 
 
 const fetchLastState = async (req, res) => {
