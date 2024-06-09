@@ -2,6 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 import Entity from "../models/EntityModel.js"; // Assuming "Entity" represents "Entity"
 import Tweet from "../models/Tweet.js";
 
+
 // Create a new tweet
 const createTweet = async (req, res) => {
 	try {
@@ -201,6 +202,6 @@ const getUserTweets = async (req, res) => {
 };
 
 export {
-    addComment, createTweet, getAllTweets, getFollowingTweets, getLikedTweets, getUserTweets, removeTweet, toggleLikeTweet
+	addComment, createTweet, getAllTweets, getFollowingTweets, getLikedTweets, getUserTweets, removeTweet, toggleLikeTweet
 };
 

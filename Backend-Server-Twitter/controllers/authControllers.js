@@ -42,8 +42,8 @@ const signIn = async (req, res) => {
 			email: entity.email,
 			followers: entity.followers,
 			following: entity.following,
-			profileImg: entity.profileImg,
-			coverImg: entity.coverImg,
+			profilePic: entity.profilePic,
+			backgroundPic: entity.backgroundPic,
 		});
 	} catch (error) {
 		res.status(500).json({ error: "Server-Down Or Unreachable!" });

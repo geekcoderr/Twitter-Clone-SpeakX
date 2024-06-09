@@ -1,10 +1,9 @@
 import bcrypt from "bcryptjs";
 import { v2 as cloudinary } from "cloudinary";
 
-// models
 import Entity from "../models/EntityModel.js";
 
-export const getUserProfile = async (req, res) => {
+const fetchUserDetails = async (req, res) => {
 	const { username } = req.params;
 
 	try {
@@ -13,12 +12,12 @@ export const getUserProfile = async (req, res) => {
 
 		res.status(200).json(user);
 	} catch (error) {
-		console.log("Error in getUserProfile: ", error.message);
+		console.log("Error in fetchUserDetails: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };
 
-export const followUnfollowUser = async (req, res) => {
+const modifyFollowStatus = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const userToModify = await Entity.findById(id);
@@ -42,24 +41,16 @@ export const followUnfollowUser = async (req, res) => {
 			// Follow the user
 			await Entity.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
 			await Entity.findByIdAndUpdate(req.user._id, { $push: { following: id } });
-			// Send notification to the user
-			const newNotification = new Notification({
-				type: "follow",
-				from: req.user._id,
-				to: userToModify._id,
-			});
-
-			await newNotification.save();
 
 			res.status(200).json({ message: "Entity followed successfully" });
 		}
 	} catch (error) {
-		console.log("Error in followUnfollowUser: ", error.message);
+		console.log("Error in modifyFollowStatus: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };
 
-export const getSuggestedUsers = async (req, res) => {
+const fetchSuggestedEntities = async (req, res) => {
 	try {
 		const userId = req.user._id;
 
@@ -82,12 +73,12 @@ export const getSuggestedUsers = async (req, res) => {
 
 		res.status(200).json(suggestedUsers);
 	} catch (error) {
-		console.log("Error in getSuggestedUsers: ", error.message);
+		console.log("Error in fetchSuggestedEntities: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };
 
-export const updateUser = async (req, res) => {
+const modifyEntityDetails = async (req, res) => {
 	const { fullName, email, username, currentPassword, newPassword, bio, link } = req.body;
 	let { profileImg, coverImg } = req.body;
 
@@ -146,7 +137,9 @@ export const updateUser = async (req, res) => {
 
 		return res.status(200).json(user);
 	} catch (error) {
-		console.log("Error in updateUser: ", error.message);
+		console.log("Error in modifyEntityDetails: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };
+
+export { fetchSuggestedEntities, fetchUserDetails, modifyEntityDetails, modifyFollowStatus };
