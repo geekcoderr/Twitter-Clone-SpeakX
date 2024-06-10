@@ -1,0 +1,25 @@
+{
+    "phases": {
+      "install": {
+        "frontend": "cd Frontend-Client-Twitter && npm install",
+        "backend": "cd Backend-Server-Twitter && npm install"
+      },
+      "build": {
+        "frontend": "cd Frontend-Client-Twitter && npm run build",
+        "backend": "cd Backend-Server-Twitter && npm run build"
+      },
+      "start": {
+        "frontend": "cd Frontend-Client-Twitter && npm start",
+        "backend": "cd Backend-Server-Twitter && npm start"
+      }
+    },
+    "run": {
+      "frontend": {
+        "command": "cd Frontend-Client-Twitter && npm start"
+      },
+      "backend": {
+        "command": "cd Backend-Server-Twitter && npm start"
+      }
+    }
+  }
+  
