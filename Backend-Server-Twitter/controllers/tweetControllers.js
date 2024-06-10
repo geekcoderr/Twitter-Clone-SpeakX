@@ -105,17 +105,11 @@ const toggleLikeTweet = async (req, res) => {
 			await Entity.updateOne({ _id: userId }, { $push: { likedPosts: tweetId } });
 			await tweet.save();
 
-			const notification = new Notification({
-				from: userId,
-				to: tweet.user,
-				type: "like",
-			});
-			await notification.save();
-
 			const updatedLikes = tweet.likes;
 			res.status(200).json(updatedLikes);
 		}
 	} catch (error) {
+		console.log(error);
 		res.status(500).json({ error: "Server-Down Or Unreachable!" });
 	}
 };
