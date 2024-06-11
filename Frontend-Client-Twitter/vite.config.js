@@ -8,7 +8,7 @@ export default defineConfig({
     outDir: 'dist', // Ensure this is set correctly
   },
   server: {
-    port: 3000,
+    port: 8000,
     proxy: {
       "/api": {
         // target: "http://localhost:5000",
