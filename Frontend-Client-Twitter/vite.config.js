@@ -11,7 +11,8 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        // target: "http://localhost:5000",
+		target:"https://b44158cf-078d-4d69-9231-b0ecd61b8a81-00-krv9adj2bcg5.pike.replit.dev/",
         changeOrigin: true,
       },
     },
