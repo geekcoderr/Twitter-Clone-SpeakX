@@ -1,25 +1,15 @@
 {
+    "version":2,
     "builds": [
       {
-        "src": "Frontend-Client-Twitter/package.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "dist"
-        }
-      },
-      {
-        "src": "Backend-Server-Twitter/package.json",
+        "src": "./server.js",
         "use": "@vercel/node"
       }
     ],
     "routes": [
       {
-        "src": "/api/(.*)",
-        "dest": "Backend-Server-Twitter/server.js"
-      },
-      {
         "src": "/(.*)",
-        "dest": "Frontend-Client-Twitter/dist/$1"
+        "dest": "/"
       }
     ]
   }
