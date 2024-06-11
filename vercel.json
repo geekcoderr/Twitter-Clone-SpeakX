@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "name": "my-project",
+    "name": "Twitter-Clone-SpeakX",
     "builds": [
       {
         "src": "Frontend-Client-Twitter/package.json",
