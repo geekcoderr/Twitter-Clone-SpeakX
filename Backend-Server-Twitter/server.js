@@ -2,6 +2,8 @@ import { v2 as cloudinary } from "cloudinary";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
+import os from "os"; // To get network details
+
 
 import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/tweet.js";
