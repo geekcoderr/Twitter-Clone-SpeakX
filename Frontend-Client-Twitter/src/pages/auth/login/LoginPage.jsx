@@ -37,7 +37,8 @@ const LoginPage = () => {
                     throw new Error(data.error || "Something went wrong");
                 } // Handle non-OK responses
             } catch (error) {
-                throw new Error(error);
+
+                throw new Error("Something went wrong");
             } // Handle fetch errors
         },
         onSuccess: () => {
