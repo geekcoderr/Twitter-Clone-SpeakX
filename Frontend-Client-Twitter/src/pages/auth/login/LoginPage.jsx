@@ -8,53 +8,58 @@ import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const LoginPage = () => {
-    const [formData, setFormData] = useState({
+    const [loginData, setLoginData] = useState({
         username: "",
         password: "",
-    }); 
+    });
 
-    const queryClient = useQueryClient(); 
+    const queryClientInstance = useQueryClient();
 
     const {
-        mutate: loginMutation,
-        isPending,
-        isError,
-        error,
+        mutate: triggerLogin,
+        isPending: isLoggingIn,
+        isError: hasLoginError,
+        error: loginError,
     } = useMutation({
         mutationFn: async ({ username, password }) => {
             try {
-                const res = await fetch("/api/auth/login", {
+                const response = await fetch("/api/auth/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({ username, password }),
-                }); 
+                });
 
-                const data = await res.json(); 
+                const result = await response.json();
 
-                if (!res.ok) {
-                    throw new Error(data.error || "Something went not right!");
-                } 
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        throw new Error("Credentials Invalid!");
+                    }
+                    throw new Error(result.error || "Failed to Log you In!");
+                }
             } catch (error) {
+                if (error.message.includes("Unexpected")) {
+                    throw new Error("Backend Server is down right now!");
+                }
                 
-                throw new Error("Backend Server is Off right Now!");
-            } 
+                throw new Error(error.message);
+            }
         },
         onSuccess: () => {
-           
-            queryClient.invalidateQueries({ queryKey: ["authUser"] });
+            queryClientInstance.invalidateQueries({ queryKey: ["authUser"] });
         },
-    }); 
+    });
 
-    const handleSubmit = (e) => {
+    const handleFormSubmit = (e) => {
         e.preventDefault();
-        loginMutation(formData);
-    }; 
+        triggerLogin(loginData);
+    };
 
     const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    }; 
+        setLoginData({ ...loginData, [e.target.name]: e.target.value });
+    };
 
     return (
         <div className='max-w-screen-xl mx-auto flex h-screen'>
@@ -63,7 +68,7 @@ const LoginPage = () => {
             </div>
             
             <div className='flex-1 flex flex-col justify-center items-center'>
-                <form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
+                <form className='flex gap-4 flex-col' onSubmit={handleFormSubmit}>
                     <XSvg className='w-24 lg:hidden fill-white' /> 
                     
                     <h1 className='text-4xl font-extrabold text-white'>{"Let's"} go.</h1> 
@@ -76,7 +81,7 @@ const LoginPage = () => {
                             placeholder='username'
                             name='username'
                             onChange={handleInputChange}
-                            value={formData.username}
+                            value={loginData.username}
                             required
                         /> 
                     </label>
@@ -89,16 +94,16 @@ const LoginPage = () => {
                             placeholder='Password'
                             name='password'
                             onChange={handleInputChange}
-                            value={formData.password}
+                            value={loginData.password}
                             required
                         /> 
                     </label>
                     
                     <button className='btn rounded-full btn-primary text-white'>
-                        {isPending ? "Loading..." : "Login"}
+                        {isLoggingIn ? "Loading..." : "Login"}
                     </button> 
                     
-                    {isError && <p className='text-red-500'>{error.message}</p>} 
+                    {hasLoginError && <p className='text-red-500'>{loginError.message}</p>} 
                 </form>
                 
                 <div className='flex flex-col gap-2 mt-4'>
@@ -112,4 +117,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage; 
+export default LoginPage;
