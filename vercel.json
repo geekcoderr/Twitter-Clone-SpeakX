@@ -1,0 +1,28 @@
+{
+    "version": 2,
+    "name": "my-project",
+    "builds": [
+      {
+        "src": "Frontend-Client-Twitter/package.json",
+        "use": "@vercel/static-build",
+        "config": {
+          "distDir": "Frontend-Client-Twitter/dist"
+        }
+      },
+      {
+        "src": "Backend-Server-Twitter/server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/api/(.*)",
+        "dest": "/Backend-Server-Twitter/server.js"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/Frontend-Client-Twitter/$1"
+      }
+    ]
+  }
+  
