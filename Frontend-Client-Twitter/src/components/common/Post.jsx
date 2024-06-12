@@ -27,7 +27,7 @@ const Post = ({ post }) => {
 				const data = await res.json();
 
 				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
+					throw new Error(data.error || "Can't delete this at the moment!");
 				}
 				return data;
 			} catch (error) {
@@ -48,7 +48,7 @@ const Post = ({ post }) => {
 				});
 				const data = await res.json();
 				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
+					throw new Error(data.error || "Can't Like at the moment!");
 				}
 				return data;
 			} catch (error) {
@@ -56,10 +56,7 @@ const Post = ({ post }) => {
 			}
 		},
 		onSuccess: (updatedLikes) => {
-			// this is not the best UX, bc it will refetch all posts
-			// queryClient.invalidateQueries({ queryKey: ["posts"] });
-
-			// instead, update the cache directly for that post
+			
 			queryClient.setQueryData(["posts"], (oldData) => {
 				return oldData.map((p) => {
 					if (p._id === post._id) {
@@ -87,7 +84,7 @@ const Post = ({ post }) => {
 				const data = await res.json();
 
 				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
+					throw new Error(data.error || "Can't comment at the moment!");
 				}
 				return data;
 			} catch (error) {

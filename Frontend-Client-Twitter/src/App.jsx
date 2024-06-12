@@ -3,7 +3,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/auth/login/LoginPage";
 import SignUpPage from "./pages/auth/signup/SignUpPage";
 import HomePage from "./pages/home/HomePage";
-import NotificationPage from "./pages/notification/NotificationPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 
 import RightPanel from "./components/common/RightPanel";
@@ -15,18 +14,17 @@ import LoadingSpinner from "./components/common/LoadingSpinner";
 
 function App() {
 	const { data: authUser, isLoading } = useQuery({
-		// we use queryKey to give a unique name to our query and refer to it later
 		queryKey: ["authUser"],
 		queryFn: async () => {
 			try {
 				const res = await fetch("/api/auth/me");
-				const data = await res.json();
-				if (data.error) return null;
+				const userGotData = await res.json();
+				if (userGotData.error) return null;
 				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
+					throw new Error(userGotData.error || "Can't Load Profile Right Now!");
 				}
-				console.log("authUser is here:", data);
-				return data;
+				console.log("Auth Details -> ", userGotData);
+				return userGotData;
 			} catch (error) {
 				throw new Error(error);
 			}
@@ -44,13 +42,11 @@ function App() {
 
 	return (
 		<div className='flex max-w-6xl mx-auto'>
-			{/* Common component, bc it's not wrapped with Routes */}
 			{authUser && <Sidebar />}
 			<Routes>
 				<Route path='/' element={authUser ? <HomePage /> : <Navigate to='/login' />} />
 				<Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to='/' />} />
 				<Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
-				<Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
 				<Route path='/profile/:username' element={authUser ? <ProfilePage /> : <Navigate to='/login' />} />
 			</Routes>
 			{authUser && <RightPanel />}
